@@ -385,7 +385,7 @@ impl PostgresWallet {
 
         let record = handles.get(&record_handle).unwrap();
 
-        unsafe { *id_ptr = record.id.as_ptr() as *const i8; }
+        unsafe { *id_ptr = record.id.as_ptr() as *const libc::c_char; }
 
         ErrorCode::Success
     }
@@ -408,7 +408,7 @@ impl PostgresWallet {
 
         let record = handles.get(&record_handle).unwrap();
 
-        unsafe { *type_ptr = record.type_.as_ptr() as *const i8; }
+        unsafe { *type_ptr = record.type_.as_ptr() as *const libc::c_char; }
 
         ErrorCode::Success
     }
@@ -456,7 +456,7 @@ impl PostgresWallet {
 
         let record = handles.get(&record_handle).unwrap();
 
-        unsafe { *tags_json_ptr = record.tags.as_ptr() as *const i8; }
+        unsafe { *tags_json_ptr = record.tags.as_ptr() as *const libc::c_char; }
 
         ErrorCode::Success
     }
@@ -1092,7 +1092,7 @@ mod tests {
                                             &mut metadata_handle);
         assert_eq!(err, ErrorCode::Success);
         let _metadata = unsafe { CStr::from_ptr(metadata_ptr).to_bytes() };
-        let _metadata = unsafe { &*(_metadata as *const [u8] as *const [i8]) };
+        let _metadata = unsafe { &*(_metadata as *const [u8] as *const [libc::c_char]) };
         //assert_eq!(_metadata.to_vec(), metadata);
 
         let err = PostgresWallet::free_storage_metadata(handle, metadata_handle);
@@ -1110,7 +1110,7 @@ mod tests {
                                             &mut metadata_handle2);
         assert_eq!(err, ErrorCode::Success);
         let _metadata2 = unsafe { CStr::from_ptr(metadata_ptr2).to_bytes() };
-        let _metadata2 = unsafe { &*(_metadata2 as *const [u8] as *const [i8]) };
+        let _metadata2 = unsafe { &*(_metadata2 as *const [u8] as *const [libc::c_char]) };
         //assert_eq!(_metadata2.to_vec(), metadata2);
 
         let err = PostgresWallet::free_storage_metadata(handle, metadata_handle2);
@@ -1639,7 +1639,7 @@ mod tests {
         let err = PostgresWallet::search_records(handle,
                                 type1_.as_ptr(),
                                 query_json.as_ptr(),
-                                options_json.as_ptr() as *const i8,
+                                options_json.as_ptr() as *const libc::c_char,
                                 &mut search_handle);
         assert_match!(ErrorCode::Success, err);
 
